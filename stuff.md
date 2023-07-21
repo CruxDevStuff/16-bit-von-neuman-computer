@@ -18,6 +18,7 @@
 #### Useful resources:
 1. FPGA Architecture:
     * Hardware Fundamentals - https://nandland.com/fpga-101/
+    * FPGA architecture - https://hardwarebee.com/the-ultimate-guide-to-fpga-architecture/
     * LUTs(Look up table) - https://hardwarebee.com/overview-of-lookup-tables-in-fpga-design/
     * Multiplexers - https://learn.sparkfun.com/tutorials/how-does-an-fpga-work
 
