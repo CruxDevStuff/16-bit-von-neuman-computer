@@ -1,17 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "shell.h"
 
-char name[20] = "Hello World boissss\n"; 
-
 int main(void) {
-    printf("%s", name); 
+    while (1) { 
+        printf("%s", prompt); 
+        getline(&input_buff_ptr, &input_buff_n, stdin); 
+        printf("You Entered : %s", input_buff_ptr); 
+
+        free(input_buff_ptr); 
+        input_buff_ptr = NULL; 
+    } 
   	return 0;
 }
 
 /* 
 TODO: 
-* open_disk - create a file with the specified size 
-* read_block
-* write_block
-* sync_disk 
+* "exit" - quit shell 
 */

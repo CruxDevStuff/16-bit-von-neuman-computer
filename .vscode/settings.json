@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "syscall.h": "c",
-        "stdio.h": "c"
-    }
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "shell.h": "c"
+    },
+    "cSpell.words": [
+        "noob"
+    ]
 }
