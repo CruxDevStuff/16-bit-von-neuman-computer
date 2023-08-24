@@ -2,7 +2,7 @@ module OR_tb;
     reg in_a, in_b; 
     wire out_; 
 
-    OR or_gate(in_a, in_b, out_); 
+    OR or_gate(out_, in_a, in_b); 
 
     initial begin
         in_a <= 0; in_b <= 0;

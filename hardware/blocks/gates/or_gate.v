@@ -1,4 +1,4 @@
-module OR(input a, input b, output out);
+module OR(output out, input a, input b);
     wire nand_out_a; 
     wire nand_out_b;
     wire nand_out_c; 
