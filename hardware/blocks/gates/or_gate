@@ -1,0 +1,108 @@
+#! /opt/homebrew/Cellar/icarus-verilog/12.0/bin/vvp
+:ivl_version "12.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/12.0/lib/ivl/system.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/12.0/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/12.0/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/12.0/lib/ivl/v2005_math.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/12.0/lib/ivl/va_math.vpi";
+S_0x154e04590 .scope module, "OR_tb" "OR_tb" 2 1;
+ .timescale 0 0;
+v0x600000fb0ea0_0 .var "in_a", 0 0;
+v0x600000fb0f30_0 .var "in_b", 0 0;
+v0x600000fb0fc0_0 .net "out_", 0 0, L_0x6000016b4620;  1 drivers
+S_0x154e04700 .scope module, "or_gate" "OR" 2 5, 3 1 0, S_0x154e04590;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "out";
+v0x600000fb0b40_0 .net "a", 0 0, v0x600000fb0ea0_0;  1 drivers
+v0x600000fb0bd0_0 .net "and_out", 0 0, L_0x6000016b45b0;  1 drivers
+v0x600000fb0c60_0 .net "b", 0 0, v0x600000fb0f30_0;  1 drivers
+v0x600000fb0cf0_0 .net "nand_out_a", 0 0, L_0x6000016b4460;  1 drivers
+v0x600000fb0d80_0 .net "nand_out_b", 0 0, L_0x6000016b44d0;  1 drivers
+v0x600000fb0e10_0 .net "out", 0 0, L_0x6000016b4620;  alias, 1 drivers
+S_0x154e04b40 .scope module, "and_gate" "AND" 3 9, 4 1 0, S_0x154e04700;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 1 "out";
+    .port_info 1 /INPUT 1 "in_1";
+    .port_info 2 /INPUT 1 "in_2";
+L_0x6000016b4540 .functor NAND 1, L_0x6000016b4460, L_0x6000016b44d0, C4<1>, C4<1>;
+v0x600000fb03f0_0 .net "in_1", 0 0, L_0x6000016b4460;  alias, 1 drivers
+v0x600000fb0480_0 .net "in_2", 0 0, L_0x6000016b44d0;  alias, 1 drivers
+v0x600000fb0510_0 .net "nand_out", 0 0, L_0x6000016b4540;  1 drivers
+v0x600000fb05a0_0 .net "out", 0 0, L_0x6000016b45b0;  alias, 1 drivers
+S_0x154e04cb0 .scope module, "not_gate" "NOT" 4 5, 5 1 0, S_0x154e04b40;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 1 "out_val";
+    .port_info 1 /INPUT 1 "in_val";
+L_0x1480400a0 .functor BUFT 1, C4<1>, C4<0>, C4<0>, C4<0>;
+L_0x6000016b45b0 .functor NAND 1, L_0x6000016b4540, L_0x1480400a0, C4<1>, C4<1>;
+v0x600000fb0240_0 .net/2s *"_ivl_1", 0 0, L_0x1480400a0;  1 drivers
+v0x600000fb02d0_0 .net "in_val", 0 0, L_0x6000016b4540;  alias, 1 drivers
+v0x600000fb0360_0 .net "out_val", 0 0, L_0x6000016b45b0;  alias, 1 drivers
+S_0x154e04e20 .scope module, "not_gate_a" "NOT" 3 7, 5 1 0, S_0x154e04700;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 1 "out_val";
+    .port_info 1 /INPUT 1 "in_val";
+L_0x148040010 .functor BUFT 1, C4<1>, C4<0>, C4<0>, C4<0>;
+L_0x6000016b4460 .functor NAND 1, v0x600000fb0ea0_0, L_0x148040010, C4<1>, C4<1>;
+v0x600000fb0630_0 .net/2s *"_ivl_1", 0 0, L_0x148040010;  1 drivers
+v0x600000fb06c0_0 .net "in_val", 0 0, v0x600000fb0ea0_0;  alias, 1 drivers
+v0x600000fb0750_0 .net "out_val", 0 0, L_0x6000016b4460;  alias, 1 drivers
+S_0x154e04f90 .scope module, "not_gate_b" "NOT" 3 8, 5 1 0, S_0x154e04700;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 1 "out_val";
+    .port_info 1 /INPUT 1 "in_val";
+L_0x148040058 .functor BUFT 1, C4<1>, C4<0>, C4<0>, C4<0>;
+L_0x6000016b44d0 .functor NAND 1, v0x600000fb0f30_0, L_0x148040058, C4<1>, C4<1>;
+v0x600000fb07e0_0 .net/2s *"_ivl_1", 0 0, L_0x148040058;  1 drivers
+v0x600000fb0870_0 .net "in_val", 0 0, v0x600000fb0f30_0;  alias, 1 drivers
+v0x600000fb0900_0 .net "out_val", 0 0, L_0x6000016b44d0;  alias, 1 drivers
+S_0x154e07700 .scope module, "not_gate_c" "NOT" 3 10, 5 1 0, S_0x154e04700;
+ .timescale 0 0;
+    .port_info 0 /OUTPUT 1 "out_val";
+    .port_info 1 /INPUT 1 "in_val";
+L_0x1480400e8 .functor BUFT 1, C4<1>, C4<0>, C4<0>, C4<0>;
+L_0x6000016b4620 .functor NAND 1, L_0x6000016b45b0, L_0x1480400e8, C4<1>, C4<1>;
+v0x600000fb0990_0 .net/2s *"_ivl_1", 0 0, L_0x1480400e8;  1 drivers
+v0x600000fb0a20_0 .net "in_val", 0 0, L_0x6000016b45b0;  alias, 1 drivers
+v0x600000fb0ab0_0 .net "out_val", 0 0, L_0x6000016b4620;  alias, 1 drivers
+    .scope S_0x154e04590;
+T_0 ;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x600000fb0ea0_0, 0;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x600000fb0f30_0, 0;
+    %delay 10, 0;
+    %vpi_call 2 10 "$display", "OR GATE : INPUT A=%d, INPUT B=%d OUTPUT=%d", v0x600000fb0ea0_0, v0x600000fb0f30_0, v0x600000fb0fc0_0 {0 0 0};
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x600000fb0ea0_0, 0;
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x600000fb0f30_0, 0;
+    %delay 10, 0;
+    %vpi_call 2 14 "$display", "OR GATE : INPUT A=%d, INPUT B=%d OUTPUT=%d", v0x600000fb0ea0_0, v0x600000fb0f30_0, v0x600000fb0fc0_0 {0 0 0};
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x600000fb0ea0_0, 0;
+    %pushi/vec4 0, 0, 1;
+    %assign/vec4 v0x600000fb0f30_0, 0;
+    %delay 10, 0;
+    %vpi_call 2 18 "$display", "OR GATE : INPUT A=%d, INPUT B=%d OUTPUT=%d", v0x600000fb0ea0_0, v0x600000fb0f30_0, v0x600000fb0fc0_0 {0 0 0};
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x600000fb0ea0_0, 0;
+    %pushi/vec4 1, 0, 1;
+    %assign/vec4 v0x600000fb0f30_0, 0;
+    %delay 10, 0;
+    %vpi_call 2 22 "$display", "OR GATE : INPUT A=%d, INPUT B=%d OUTPUT=%d\012", v0x600000fb0ea0_0, v0x600000fb0f30_0, v0x600000fb0fc0_0 {0 0 0};
+    %vpi_call 2 24 "$finish" {0 0 0};
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 6;
+    "N/A";
+    "<interactive>";
+    "or_gate_tb.v";
+    "or_gate.v";
+    "and_gate.v";
+    "not_gate.v";
