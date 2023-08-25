@@ -1,5 +1,5 @@
 $date
-	Thu Aug 24 23:37:17 2023
+	Sat Aug 26 00:41:32 2023
 $end
 $version
 	Icarus Verilog
@@ -8,23 +8,80 @@ $timescale
 	1s
 $end
 $scope module NOT_tb $end
-$var wire 1 ! out $end
-$var reg 1 " in $end
+$var wire 8 ! out_8 [7:0] $end
+$var wire 1 " out $end
+$var reg 1 # in $end
+$var reg 8 $ in_8 [7:0] $end
 $scope module not_gate $end
-$var wire 1 " in_val $end
-$var wire 1 ! out_val $end
+$var wire 1 # in_val $end
+$var wire 1 " out_val $end
+$upscope $end
+$scope module not_gate_8 $end
+$var wire 8 % in [7:0] $end
+$var wire 8 & out [7:0] $end
+$scope begin genblk1[0] $end
+$var parameter 2 ' i $end
+$upscope $end
+$scope begin genblk1[1] $end
+$var parameter 2 ( i $end
+$upscope $end
+$scope begin genblk1[2] $end
+$var parameter 3 ) i $end
+$upscope $end
+$scope begin genblk1[3] $end
+$var parameter 3 * i $end
+$upscope $end
+$scope begin genblk1[4] $end
+$var parameter 4 + i $end
+$upscope $end
+$scope begin genblk1[5] $end
+$var parameter 4 , i $end
+$upscope $end
+$scope begin genblk1[6] $end
+$var parameter 4 - i $end
+$upscope $end
+$scope begin genblk1[7] $end
+$var parameter 4 . i $end
+$upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
+b111 .
+b110 -
+b101 ,
+b100 +
+b11 *
+b10 )
+b1 (
+b0 '
 $end
 #0
 $dumpvars
-1"
-0!
+bx &
+bx %
+bx $
+1#
+0"
+bx !
 $end
 #10
-1!
-0"
+1"
+0#
 #20
+b11111111 !
+b11111111 &
+b0 $
+b0 %
+#30
+b0 !
+b0 &
+b11111111 $
+b11111111 %
+#40
+b1000001 !
+b1000001 &
+b10111110 $
+b10111110 %
+#50
