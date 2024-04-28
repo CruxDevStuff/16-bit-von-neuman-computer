@@ -2,7 +2,7 @@ module AND_tb;
     reg in_a, in_b; 
     wire out_; 
 
-    AND and_gate(in_a, in_b, out_); 
+    AND and_gate(out_, in_a, in_b); 
 
     initial begin
         in_a <= 0; in_b <= 0;
