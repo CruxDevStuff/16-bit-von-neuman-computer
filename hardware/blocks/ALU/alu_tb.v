@@ -1,14 +1,15 @@
 module ALU_tb; 
-    reg [15:0] a16 = 16'b0111000010010101; 
+    reg [15:0] a16 = 16'b1111000010010101; 
     reg [15:0] b16 = 16'b0010011110010101; 
 
     reg a = 0, b = 0, c_in = 0; 
     wire sum, carry;  
     FULL_ADDER full_adder(a, b, c_in, sum, carry); 
 
-    reg zx, nx, zy, ny, f, no, zr, ng; 
-    wire [15:0] alu_out; 
-    ALU alu(a16, b16, alu_out, zx, nx, zy, ny, f, no, zr, ng); 
+    reg zx, nx, zy, ny, f, no; 
+    wire [15:0] alu_out1, alu_out2; 
+    wire zr, ng; 
+    ALU alu(a16, b16, alu_out1, alu_out2, 1'b1, 1'b0, 1'b1, 1'b0, f, no, zr, ng); 
 
     wire [15:0] and_out; 
     AND_N #(.N(16)) and_16(a16, b16, and_out); 
@@ -52,7 +53,12 @@ module ALU_tb;
         $display("------- ALU TEST BENCH: 16 BIT AND GATE -------"); 
         #10
         $display("A: %b, B: %b, OUTPUT: %b", a16, b16, and_out); 
-
+        #10
+        $display("------- ALU TEST BENCH: CONTROL BITS -------"); 
+        #10 
+        $display("x: %b, zx: %b, OUTPUT: %b", a16, 0, alu_out1); 
+        #10
+        $display("y: %b, zx: %b, OUTPUT: %b", b16, 0, alu_out2); 
         $finish; 
     end
 endmodule
