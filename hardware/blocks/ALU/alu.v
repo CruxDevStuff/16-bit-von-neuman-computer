@@ -2,13 +2,20 @@ module ALU (input [15:0] x, y, output reg[15:0] out, out2, input zx, nx, zy, ny,
     reg [15:0] x_in; 
     reg [15:0] y_in; 
 
+    wire adder_carry; 
+    wire [15:0] adder_out; 
+    FULLADDER_16 adder16(x, y, adder_carry, adder_out); 
+
+    wire [15:0] and_out; 
+    AND_16 and16(x, y, and_out); 
+
     always @(x or y) begin
         if (zx) begin
             x_in = {16{1'b0}}; 
-            out = x_in; 
+            // out = x_in; 
         end else begin
             x_in = x;  
-            out = x_in; 
+            // out = x_in; 
         end
 
         if (nx) begin 
@@ -18,57 +25,30 @@ module ALU (input [15:0] x, y, output reg[15:0] out, out2, input zx, nx, zy, ny,
 
         if (zy == 1'b1) begin
             y_in = {16{1'b0}}; 
-            out2 = y_in; 
+            // out2 = y_in; 
         end else begin
             y_in = y;  
-            out2 = y_in; 
+            // out2 = y_in; 
         end
 
         if (ny) begin 
             y_in = ~y_in; 
-            out2 = y_in;
+            // out2 = y_in;
         end 
+
+        out2 = adder_out; 
+        out = and_out; 
     end
 endmodule
 
-module AND_N(input [15:0] x, y, output [15:0] out); 
-    parameter N = 16; 
-    genvar i; 
-
-    generate
-        for (i = 0; i < N; i= i+1) begin
-            and(out[i], x[i], y[i]); 
-        end
-    endgenerate
+module AND_16(input [15:0] x, y, output reg[15:0] out); 
+    always @(x or y) begin
+        {out} = x & y;  
+    end
 endmodule
 
-module FULL_ADDER(input a, b, c, output sum, carry);
-    wire sum1, carry1; 
-    wire sum2, carry2; 
-
-    xor(sum1, a, b); 
-    and(carry1, a, b); 
-
-    xor(sum, sum1, c); 
-    and(carry2, sum1, c); 
-
-    or(carry, carry1, carry2); 
-endmodule
-
-
-module ADDER_N(input [15:0] x, y, output [15:0] out); 
-    parameter N = 16; // define the adder bit length. can be externally overwridden to change the adder size.
-    wire [N-1:0] carry_out, sum_out; 
-
-    genvar i; 
-
-    generate
-        for (i = 0; i < N; i= i+1) begin
-            if (i==0)
-                FULL_ADDER full_adder(x[i], y[i], 1'b0, out[i], carry_out[i]); 
-            else
-                FULL_ADDER full_adder(x[i], y[i], carry_out[i-1], out[i], carry_out[i]); 
-        end
-    endgenerate
-
+module FULLADDER_16(input wire[15:0] x, y, output reg c_out, output reg[15:0] sum); 
+    always @(x or y) begin
+        {c_out, sum} = x + y; 
+    end
 endmodule
