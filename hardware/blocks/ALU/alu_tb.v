@@ -2,10 +2,11 @@ module ALU_tb;
     reg [15:0] a16 = 16'b1011000010010101; 
     reg [15:0] b16 = 16'b0010011110010101; 
 
-    reg zx, nx, zy, ny, f, no; 
-    wire [15:0] alu_and_out, alu_adder_out; 
+    reg zx, nx, zy, ny, no; 
+    wire [15:0] alu_and_out, alu_adder_out, result; 
     wire zr, ng; 
-    ALU alu(a16, b16, alu_and_out, alu_adder_out, 1'b1, 1'b0, 1'b1, 1'b0, f, no, zr, ng); 
+    reg f = 1; 
+    ALU alu(a16, b16, alu_and_out, alu_adder_out, result, 1'b1, 1'b0, 1'b0, 1'b0, f, no, zr, ng); 
 
     wire [15:0] and_out; 
     AND_16 and_16(a16, b16, and_out); 
@@ -27,6 +28,10 @@ module ALU_tb;
         $display("------- ALU : 16 BIT AND GATE -------"); 
         #10
         $display("A: %b, B: %b, out: %b", a16, b16, alu_and_out); 
+        #10
+        $display("------- ALU : OUTPUT -------"); 
+        #10
+        $display("F: %b, OUTPUT: %b", f, result); 
         $finish; 
     end
 endmodule
