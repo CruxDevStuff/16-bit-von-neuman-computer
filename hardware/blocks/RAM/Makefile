@@ -11,7 +11,7 @@ ADD_SRC = ${PROJ}.v
 ${PROJ}: ${PROJ}.rpt ${PROJ}.bin
 
 ${PROJ}.json: ${PROJ}.v
-	yosys -p 'synth_ice40 -top top -json $@' ${PROJ}.v
+	yosys -p 'synth_ice40 -top register -json $@' ${PROJ}.v
 
 ${PROJ}.asc: ${PROJ}.json
 	nextpnr-ice40 --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf-allow-unconstrained --pcf ${PCF} --asc $@
