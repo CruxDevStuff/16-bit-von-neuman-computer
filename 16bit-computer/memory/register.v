@@ -3,6 +3,7 @@
 module REGISTER (
   input clk,
   input reset_n,
+  input load, 
   input d_in, 
   output d_out
 );
@@ -12,7 +13,7 @@ module REGISTER (
   always @(posedge clk) begin
     if (!reset_n) begin
       bit_data <= 0; 
-    end else begin
+    end else if(load) begin
       bit_data <= d_in; 
     end
   end
@@ -23,6 +24,7 @@ endmodule
 module REGISTER_16(
   input clk,
   input reset_n,
+  input load, 
   input [15:0] d_in, 
   output [15:0] d_out
 );
@@ -32,7 +34,7 @@ module REGISTER_16(
   always @(posedge clk) begin
     if (!reset_n) begin
       bit_data <= {16{1'b0}}; 
-    end else begin
+    end else if(load) begin
       bit_data <= d_in; 
     end
   end

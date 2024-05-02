@@ -1,6 +1,6 @@
 # Compile and run testbench simulation and visualise the .vcd file on gtkwave
-`iverilog -o ram.bin ram.v ram_tb.v && ./ram.bin`
-`gtkwave ram-dump.vcd` <br> 
+`iverilog -o register.bin register.v register_tb.v && ./register.bin`
+`gtkwave register-dump.vcd` <br> 
 
 <img src="./vis-screenshot.png" width="1000" />
 
