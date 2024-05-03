@@ -29,15 +29,15 @@ module REGISTER_16(
   output [15:0] d_out
 );
 
-  reg [15:0] bit_data; 
+  reg [15:0] register_data = {16{1'b0}}; 
 
   always @(posedge clk) begin
     if (!reset_n) begin
-      bit_data <= {16{1'b0}}; 
+      register_data <= {16{1'b0}}; 
     end else if(load) begin
-      bit_data <= d_in; 
+      register_data <= d_in; 
     end
   end
   
-  assign d_out = bit_data; 
+  assign d_out = register_data; 
 endmodule
