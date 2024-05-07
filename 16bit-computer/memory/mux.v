@@ -1,10 +1,10 @@
 module mux_8to1(
-    input[15:0] a, b, c, d, e, f, g, h,
     input [2:0] sel, 
+    input[15:0] a, b, c, d, e, f, g, h,
     output reg [15:0] mux_out
 ); 
 
-    always @(a or b or c or d or sel) begin
+    always @(a or b or c or d or e or f or g or h or sel) begin
         case(sel)
             3'b000 : mux_out <= a; 
             3'b001 : mux_out <= b; 
