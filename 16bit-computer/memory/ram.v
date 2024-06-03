@@ -26,7 +26,7 @@ module RAM8(
                     ram_out); 
 
     // write
-    demux_1to8 demux8(address, load_0, load_1,
+    demux_1to8 demux8(load, address, load_0, load_1,
                     load_2, load_3, load_4,
                     load_5, load_6, load_7); 
 
@@ -58,7 +58,7 @@ module RAM64(
     RAM8 ram8_chip_7(clk, load_7, reg_adr, data_in, chip_out_7); 
 
     // write 
-    demux_1to8 demux8(chip_adr, load_0, load_1,
+    demux_1to8 demux8(load, chip_adr, load_0, load_1,
                     load_2, load_3, load_4,
                     load_5, load_6, load_7); 
     
@@ -68,3 +68,116 @@ module RAM64(
                 chip_out_7, ram_out); 
 
 endmodule
+
+
+module RAM512(
+    input clk, load, 
+    input [8:0] address, 
+    input [15:0] data_in, 
+    output wire [15:0] ram_out 
+); 
+
+    wire [2:0] curr_chip_adr = address[8:6]; 
+    wire [5:0] next_chip_adr = address[5:0]; 
+
+    wire [15:0] chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, chip_out_7;
+
+    wire load_0, load_1, load_2, load_3, load_4, 
+                load_5, load_6, load_7; 
+
+    RAM64 ram64_chip_0(clk, load_0, next_chip_adr, data_in, chip_out_0); 
+    RAM64 ram64_chip_1(clk, load_1, next_chip_adr, data_in, chip_out_1); 
+    RAM64 ram64_chip_2(clk, load_2, next_chip_adr, data_in, chip_out_2); 
+    RAM64 ram64_chip_3(clk, load_3, next_chip_adr, data_in, chip_out_3); 
+    RAM64 ram64_chip_4(clk, load_4, next_chip_adr, data_in, chip_out_4); 
+    RAM64 ram64_chip_5(clk, load_5, next_chip_adr, data_in, chip_out_5); 
+    RAM64 ram64_chip_6(clk, load_6, next_chip_adr, data_in, chip_out_6); 
+    RAM64 ram64_chip_7(clk, load_7, next_chip_adr, data_in, chip_out_7); 
+
+    // write 
+    demux_1to8 demux8(load, curr_chip_adr, load_0, load_1,
+                    load_2, load_3, load_4,
+                    load_5, load_6, load_7); 
+    
+    // // read 
+    mux_8to1 mux8(curr_chip_adr, chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, 
+                chip_out_7, ram_out); 
+
+endmodule
+
+module RAM4K(
+    input clk, load, 
+    input [11:0] address, 
+    input [15:0] data_in, 
+    output wire [15:0] ram_out 
+); 
+
+    wire [2:0] curr_chip_adr = address[11:9]; 
+    wire [8:0] next_chip_adr = address[8:0]; 
+
+    wire [15:0] chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, chip_out_7;
+
+    wire load_0, load_1, load_2, load_3, load_4, 
+                load_5, load_6, load_7; 
+
+
+    RAM512 ram512_chip_0(clk, load_0, next_chip_adr, data_in, chip_out_0); 
+    RAM512 ram512_chip_1(clk, load_1, next_chip_adr, data_in, chip_out_1); 
+    RAM512 ram512_chip_2(clk, load_2, next_chip_adr, data_in, chip_out_2); 
+    RAM512 ram512_chip_3(clk, load_3, next_chip_adr, data_in, chip_out_3); 
+    RAM512 ram512_chip_4(clk, load_4, next_chip_adr, data_in, chip_out_4); 
+    RAM512 ram512_chip_5(clk, load_5, next_chip_adr, data_in, chip_out_5); 
+    RAM512 ram512_chip_6(clk, load_6, next_chip_adr, data_in, chip_out_6); 
+    RAM512 ram512_chip_7(clk, load_7, next_chip_adr, data_in, chip_out_7); 
+
+    // write 
+    demux_1to8 demux8(load, curr_chip_adr, load_0, load_1,
+                    load_2, load_3, load_4,
+                    load_5, load_6, load_7); 
+    
+    // // read 
+    mux_8to1 mux8(curr_chip_adr, chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, 
+                chip_out_7, ram_out); 
+endmodule
+
+module RAM16K(
+    input clk, load, 
+    input [13:0] address, 
+    input [15:0] data_in, 
+    output wire [15:0] ram_out 
+); 
+
+    wire [2:0] curr_chip_adr = address[13:11]; 
+    wire [11:0] next_chip_adr = address[11:0]; 
+
+    wire [15:0] chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, chip_out_7;
+
+    wire load_0, load_1, load_2, load_3, load_4, 
+                load_5, load_6, load_7; 
+
+
+    RAM4K ram4k_chip_0(clk, load_0, next_chip_adr, data_in, chip_out_0); 
+    RAM4K ram4k_chip_1(clk, load_1, next_chip_adr, data_in, chip_out_1); 
+    RAM4K ram4k_chip_2(clk, load_2, next_chip_adr, data_in, chip_out_2); 
+    RAM4K ram4k_chip_3(clk, load_3, next_chip_adr, data_in, chip_out_3); 
+    RAM4K ram4k_chip_4(clk, load_4, next_chip_adr, data_in, chip_out_4); 
+    RAM4K ram4k_chip_5(clk, load_5, next_chip_adr, data_in, chip_out_5); 
+    RAM4K ram4k_chip_6(clk, load_6, next_chip_adr, data_in, chip_out_6); 
+    RAM4K ram4k_chip_7(clk, load_7, next_chip_adr, data_in, chip_out_7); 
+
+    // write 
+    demux_1to8 demux8(load, curr_chip_adr, load_0, load_1,
+                    load_2, load_3, load_4,
+                    load_5, load_6, load_7); 
+    
+    // // read 
+    mux_8to1 mux8(curr_chip_adr, chip_out_0, chip_out_1, chip_out_2, 
+                chip_out_3, chip_out_4, chip_out_5, chip_out_6, 
+                chip_out_7, ram_out); 
+endmodule
+

@@ -20,19 +20,22 @@ module mux_8to1(
 endmodule
 
 module demux_1to8 (
+    input load, 
     input [2:0] sel, 
     output reg a, b, c, d, e, f, g, h
 );
-    always @(sel) begin
-        case(sel)
-            3'b000 : {a, b, c, d, e, f, g, h} <= {1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; 
-            3'b001 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
-            3'b010 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
-            3'b011 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0};
-            3'b100 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0};
-            3'b101 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};
-            3'b110 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0};
-            3'b111 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1};
-        endcase
+    always @(sel or load) begin
+        if (load) begin
+            case(sel)
+                3'b000 : {a, b, c, d, e, f, g, h} <= {1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0}; 
+                3'b001 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
+                3'b010 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0};
+                3'b011 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0, 1'b0};
+                3'b100 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0, 1'b0};
+                3'b101 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0, 1'b0};
+                3'b110 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1, 1'b0};
+                3'b111 : {a, b, c, d, e, f, g, h} <= {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b1};
+            endcase
+        end
     end
 endmodule
