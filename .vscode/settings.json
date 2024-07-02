@@ -3,7 +3,8 @@
         "syscall.h": "c",
         "stdio.h": "c",
         "stdlib.h": "c",
-        "shell.h": "c"
+        "shell.h": "c",
+        "__config": "cpp"
     },
     "cSpell.words": [
         "noob"

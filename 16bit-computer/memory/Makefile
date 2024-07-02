@@ -1,36 +1,33 @@
-# configuration
-SHELL = /bin/sh
-FPGA_PKG = cb132
-FPGA_TYPE = hx8k
-PCF = board.pcf
+PROJ      = blinky
+BUILD     = ./build
+DEVICE    = hx8k
+FOOTPRINT = cb132
 
-PROJ = ram
-# included modules
-ADD_SRC = ${PROJ}.v
+# Files
+FILES = test.v
 
-${PROJ}: ${PROJ}.rpt ${PROJ}.bin
+.PHONY: all clean upload timing
 
-${PROJ}.json: ${PROJ}.v
-	yosys -p 'synth_ice40 -top register -json $@' ${PROJ}.v
+all $(BUILD)/$(PROJ).asc $(BUILD)/$(PROJ).bin:
+	# if build folder doesn't exist, create it
+	mkdir -p $(BUILD)
 
-${PROJ}.asc: ${PROJ}.json
-	nextpnr-ice40 --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf-allow-unconstrained --pcf ${PCF} --asc $@
+	# synthesize using Yosys
+	yosys -p "synth_ice40 -top ram_chip -blif $(BUILD)/$(PROJ).blif -json $(BUILD)/$(PROJ).json" $(FILES)
 
-${PROJ}.rpt: ${PROJ}.asc
-	icetime -d ${FPGA_TYPE} -mtr $@ $<
+	# Place and route using arachne
+	arachne-pnr -d $(subst hx,,$(subst lp,,$(DEVICE))) -P $(FOOTPRINT) -o $(BUILD)/$(PROJ).asc -p board.pcf $(BUILD)/$(PROJ).blif
 
-${PROJ}.bin: ${PROJ}.asc
-	icepack $< $@
+	#nextpnr-ice40 --hx$(DEVICE) --json build/$(PROJ).json --pcf board.pcf --asc build/$(PROJ).asc
 
-gui: ${PROJ}.json
-	nextpnr-ice40 --gui --${FPGA_TYPE} --package ${FPGA_PKG} --json $< --pcf ${PCF} --asc ${PROJ}.asc
+	# Convert to bitstream using IcePack
+	icepack $(BUILD)/$(PROJ).asc $(BUILD)/$(PROJ).bin
 
-upload: ${PROJ}.bin
-	iceprog $<
+upload: $(BUILD)/$(PROJ).bin
+	iceprog $(BUILD)/$(PROJ).bin
 
-all:${PROJ} 
+timing: $(BUILD)/$(PROJ).asc
+	icetime -tmd hx$(DEVICE) $(BUILD)/$(PROJ).asc
 
 clean:
-	rm -f *.json *.asc *.rpt *.bin *yosys.log
-
-.PHONY: all clean
+	rm build/*
