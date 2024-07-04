@@ -5,6 +5,7 @@
 #include <verilated.h>
 #include "verilated_vcd_c.h"
 #include "Vcomputer.h"
+#include "Vcomputer___024root.h"
 #include "include/main.h"
 
 const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
@@ -58,12 +59,6 @@ int create_sdl_window() {
     return 0;
 }
 
-void tick_clock(Vcomputer *block) {
-    computer_block->eval();            
-    block->clk ^= 1;
-    sim_time += 1;
-}
-
 void end_dump() {
     m_trace->close(); 
     delete computer_block; 
@@ -80,52 +75,86 @@ void update_dump() {
     m_trace->dump(sim_time); 
 }
 
-void update_pixel(int x, int y, bool state) {
-    // TODO: check pixel coordinate range 
 
-    Uint8* pixels = (Uint8*)surface->pixels;
-    
-    int byte_index = y * surface->pitch + x / 8;
-    int bit_index = 7 - (x % 8); 
-    
+void tick_clock(Vcomputer *block) {
+    computer_block->eval(); 
+    update_dump();
+
+    block->clk ^= 1;
+    sim_time += 1;
+}
+
+PixelIndex pixel_coordinate_to_index(int x, int y) {
+    int byte_index = y * 32 + x / 16;
+    int bit_index = 15 - (x % 16); 
+
+    PixelIndex pixel_index; 
+    pixel_index.byte_index = byte_index; 
+    pixel_index.bit_index = bit_index; 
+
+    return pixel_index; 
+}
+
+void update_individual_pixel(int x, int y, bool state) {
+    // TODO: check pixel coordinate range 
+    Uint16* pixels = (Uint16*)surface->pixels;
+
+    PixelIndex indexes = pixel_coordinate_to_index(x, y); 
+
     if (state == true) {
-        pixels[byte_index] |= (1 << bit_index); 
+        pixels[indexes.byte_index] |= (1 << indexes.bit_index); 
     } else if (state == false) {
-        pixels[byte_index] &= ~(1 << bit_index); 
+        pixels[indexes.byte_index] &= ~(1 << indexes.bit_index); 
     }
+}
+
+void map_memory_to_screen() {
+    surface->pixels = computer_block->screen_out;
+}
+
+/* returns state of a pixel. 
+set "entire_word" to "true" to get the entire memory block(16 bits in decimal) 
+that the pixel belongs to*/
+
+int get_pixel(int x, int y, bool entire_word=false) {
+    // // returns 0 - black, 1 - white, -1 - invalid
+    Uint16* pixels = (Uint16*)surface->pixels;
+
+    PixelIndex indexes = pixel_coordinate_to_index(x, y); 
+
+    if (entire_word) {
+        return (int)(std::bitset<16>(pixels[indexes.byte_index])).to_ulong(); 
+    } else {
+        return (int)(std::bitset<1>(pixels[indexes.byte_index])[indexes.bit_index]);
+    }
+    
 }
 
 int poll_sim_state() {
     SDL_Event event_handler;
     bool quit = false;
-
+    
     while(!quit) {
 
         tick_clock(computer_block); 
-        std::cout << sim_time << "\n";
+        map_memory_to_screen();
 
-        // std::cout << computer_block->screen_out[0] << std::endl; 
+        // std::cout << sim_time << "\n";
+        // std::cout << computer_block->rootp->computer__DOT__data_mem__DOT__memory[16384] << std::endl;
+        // std::cout << computer_block->rootp->computer__DOT__outM << std::endl;
 
-        
-        update_dump(); 
-        
+        int state = get_pixel(9, 3, true);
+
+        // std::cout << state << std::endl;
+        // std::cout << "---------" << std::endl;
+
         // poll sdl
 		while(SDL_PollEvent(&event_handler) != 0) {
             // do things according to user input type
             if(event_handler.type == SDL_QUIT) {
                 quit = true;
             }
-
         }
-
-        for (int y = 0; y < SCREEN_HEIGHT; y++) {
-            if (y % 8 == 0) {
-                for (int x = 0; x < SCREEN_WIDTH; x++) {
-                    update_pixel(x, y, true); 
-                }
-            }
-        }
-        
 
         SDL_RenderClear(renderer);
         SDL_Texture * screen_texture = SDL_CreateTextureFromSurface(renderer, surface);

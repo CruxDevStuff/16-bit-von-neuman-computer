@@ -6,4 +6,4 @@
 knowmore* 
 shell
 obj_dir
-settings.json
+./.vscode/*

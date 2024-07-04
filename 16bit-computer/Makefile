@@ -16,14 +16,14 @@ LDFLAGS = `sdl2-config --libs`
 
 
 V$(TOP_TARGET).mk: $(VERILOG_SRC)
-	verilator -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
+	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
 
 all: V$(TOP_TARGET).mk
 	make -C ./obj_dir -f V$(VERILOG_TOP).mk
 	echo ------- TO EXECUTE THE COMPILED BINARY, RUN: ./obj_dir/$(TOP_TARGET) --------
 
 dmem:
-	verilator -I$(SDL_ROOT)/include/ --trace -cc $(DMEM_VRLG_SRC) --top $(DMEM_VRLG_TOP) --exe $(DMEM_CPP_SRC) -o $(DMEM_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
+	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(DMEM_VRLG_SRC) --top $(DMEM_VRLG_TOP) --exe $(DMEM_CPP_SRC) --public -o $(DMEM_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
 	make -C ./obj_dir -f V$(DMEM_VRLG_TOP).mk
 	echo ------- TO EXECUTE "DataMemory" RUN : ./obj_dir/$(DMEM_TARGET) --------
 
