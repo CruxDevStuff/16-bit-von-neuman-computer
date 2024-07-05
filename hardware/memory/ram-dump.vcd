@@ -1,0 +1,111 @@
+$date
+	Wed May  8 22:23:28 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	100ps
+$end
+$scope module REGISTER $end
+$var wire 1 ! clk $end
+$var wire 1 " d_in $end
+$var wire 1 # d_out $end
+$var wire 1 $ load $end
+$var wire 1 % reset_n $end
+$var reg 1 & bit_data $end
+$upscope $end
+$scope module ram_tb $end
+$var wire 1 ' clk $end
+$var wire 16 ( ram_output_16k [15:0] $end
+$var reg 1 ) _clk $end
+$var reg 1 * load_16k $end
+$var reg 1 + load_8 $end
+$var reg 1 , reset_n $end
+$var reg 14 - t_adr_16k [13:0] $end
+$var reg 3 . t_adr_8 [2:0] $end
+$var reg 16 / write_data_16k [15:0] $end
+$var reg 16 0 write_data_8 [15:0] $end
+$var real 1 1 capture $end
+$var integer 32 2 rand_in [31:0] $end
+$scope module ram16k $end
+$var wire 14 3 address [13:0] $end
+$var wire 1 ' clk $end
+$var wire 16 4 data_in [15:0] $end
+$var wire 1 * load $end
+$var wire 16 5 ram_out [15:0] $end
+$var wire 12 6 next_chip_adr [11:0] $end
+$var wire 1 7 load_7 $end
+$var wire 1 8 load_6 $end
+$var wire 1 9 load_5 $end
+$var wire 1 : load_4 $end
+$var wire 1 ; load_3 $end
+$var wire 1 < load_2 $end
+$var wire 1 = load_1 $end
+$var wire 1 > load_0 $end
+$var wire 3 ? curr_chip_adr [2:0] $end
+$var wire 16 @ chip_out_7 [15:0] $end
+$var wire 16 A chip_out_6 [15:0] $end
+$var wire 16 B chip_out_5 [15:0] $end
+$var wire 16 C chip_out_4 [15:0] $end
+$var wire 16 D chip_out_3 [15:0] $end
+$var wire 16 E chip_out_2 [15:0] $end
+$var wire 16 F chip_out_1 [15:0] $end
+$var wire 16 G chip_out_0 [15:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 G
+b0 F
+b0 E
+b0 D
+b0 C
+b0 B
+b0 A
+b0 @
+b0 ?
+1>
+0=
+0<
+0;
+0:
+09
+08
+07
+b0 6
+b0 5
+b11010100100100 4
+b0 3
+b10010000101010011010100100100 2
+r0 1
+b1111111111111111 0
+b11010100100100 /
+b0 .
+b0 -
+1,
+1+
+1*
+0)
+b0 (
+0'
+x&
+z%
+z$
+x#
+z"
+z!
+$end
+#50
+b11010100100100 (
+b11010100100100 5
+b11010100100100 G
+1'
+1)
+#100
+0'
+0)
