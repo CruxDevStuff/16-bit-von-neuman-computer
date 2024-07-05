@@ -8,7 +8,7 @@ module computer(
     wire [15:0] outM = 0;
     wire load = 0;
     wire [14:0] adr = 24575;
-
+    
     DataMemory data_mem(
         .clk(clk), 
         .load(load),

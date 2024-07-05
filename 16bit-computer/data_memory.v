@@ -24,7 +24,11 @@ module DataMemory(
         end 
     end
 
+    // update keyboard memory map. 
+    always begin
+        memory[24575] = kb_in;
+    end
+
     assign d_out = memory[adr]; 
     assign screen_out = memory[24574:16383];
-    
 endmodule
