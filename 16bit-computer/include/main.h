@@ -12,7 +12,7 @@ struct PixelIndex {
     int bit_index = -1; 
 }; 
 
-unordered_map<string, int> _character_map = {
+unordered_map<string, int> character_to_code_map = {
 
     {"0", 48}, {"1", 49}, {"2", 50}, {"3", 51}, {"4", 52}, {"5", 53}, {"6", 54}, {"7", 55},
     {"8", 56}, {"9", 57},

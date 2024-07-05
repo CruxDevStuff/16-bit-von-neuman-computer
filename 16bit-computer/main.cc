@@ -18,6 +18,8 @@ SDL_Renderer * renderer = NULL;
 SDL_Texture * texture = NULL; 
 SDL_Surface * surface = NULL; 
 
+int pressed_key = 0; 
+
 int create_sdl_window() {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
@@ -54,6 +56,8 @@ int create_sdl_window() {
     SDL_Color colors[2] = {{0, 0, 0, 255}, {255, 255, 255, 255}};
     SDL_SetPaletteColors(surface->format->palette, colors, 0, 2);
 
+    // use unicode keyboard. cant differentiate between "a" and "A" without this.
+    // SDL_EnableUNICODE(SDL_ENABLE);
     SDL_UpdateWindowSurface(window);
 
     return 0;
@@ -135,27 +139,41 @@ int poll_sim_state() {
     bool quit = false;
     
     while(!quit) {
-
         tick_clock(computer_block); 
         map_memory_to_screen();
 
+        computer_block->kb_in = pressed_key;
+
         // std::cout << sim_time << "\n";
-        // std::cout << computer_block->rootp->computer__DOT__data_mem__DOT__memory[16384] << std::endl;
+        std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
         // std::cout << computer_block->rootp->computer__DOT__outM << std::endl;
 
-        int state = get_pixel(9, 3, true);
-
+        // int state = get_pixel(9, 3, true);
         // std::cout << state << std::endl;
-        // std::cout << "---------" << std::endl;
 
         // poll sdl
+        SDL_StartTextInput();
+
 		while(SDL_PollEvent(&event_handler) != 0) {
+            pressed_key = 0;
             // do things according to user input type
             if(event_handler.type == SDL_QUIT) {
                 quit = true;
             }
-        }
 
+            if(event_handler.type == SDL_TEXTINPUT) {
+                pressed_key = character_to_code_map[(char*)event_handler.text.text];
+            }
+
+            if (event_handler.type == SDL_KEYDOWN) {
+                // TODO: not text keys like : enter, backspace handled here.
+            }
+        } 
+    
+        // std::cout << pressed_key; 
+        std::cout << "---------" << std::endl;
+        
+        SDL_StopTextInput();
         SDL_RenderClear(renderer);
         SDL_Texture * screen_texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_RenderCopy(renderer, screen_texture, NULL, NULL);
