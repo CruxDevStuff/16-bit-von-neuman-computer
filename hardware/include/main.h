@@ -3,13 +3,18 @@
 
 using namespace std;
 
-#define SCREEN_HEIGHT 256
-#define SCREEN_WIDTH 512
+#define SCREEN_HEIGHT 256*2
+#define SCREEN_WIDTH 512*2
 #define MAX_SIM_TIME 20 // clock edges to simulate
 
 struct PixelIndex {
-    int byte_index = -1; 
-    int bit_index = -1; 
+    // index of pixel in the hack computer memory map 
+    int memory_byte_index = -1; 
+    int memory_bit_index = -1; 
+    
+    // index of pixel in the SDL surface array
+    int screen_byte_index = -1; 
+    int screen_bit_index = -1; 
 }; 
 
 unordered_map<string, int> character_to_code_map = {

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "SDL.h"
 #include "SDL_timer.h"
-
+#include "SDL_ttf.h"
 #include <verilated.h>
 #include "verilated_vcd_c.h"
 #include "Vcomputer.h"
@@ -87,31 +87,45 @@ void tick_clock(Vcomputer *block) {
 }
 
 PixelIndex pixel_coordinate_to_index(int x, int y) {
-    int byte_index = y * 32 + x / 16;
-    int bit_index = 15 - (x % 16); 
+    int memory_byte_index = y * 32 + x / 16;
+    int memory_bit_index = 15 - (x % 16); 
+
+    int screen_byte_index = y * 128 + x / 8;
+    int screen_bit_index = 7 - (x % 8); 
 
     PixelIndex pixel_index; 
-    pixel_index.byte_index = byte_index; 
-    pixel_index.bit_index = bit_index; 
+
+    pixel_index.memory_byte_index = memory_byte_index; 
+    pixel_index.memory_bit_index = memory_bit_index; 
+
+    pixel_index.screen_byte_index = screen_byte_index;
+    pixel_index.screen_bit_index = screen_bit_index;
 
     return pixel_index; 
 }
 
 void update_individual_pixel(int x, int y, bool state) {
     // TODO: check pixel coordinate range 
-    Uint16* pixels = (Uint16*)surface->pixels;
+    Uint8* pixels = (Uint8*)surface->pixels;
 
     PixelIndex indexes = pixel_coordinate_to_index(x, y); 
 
     if (state == true) {
-        pixels[indexes.byte_index] |= (1 << indexes.bit_index); 
+        pixels[indexes.screen_byte_index] |= (1 << indexes.screen_bit_index); 
     } else if (state == false) {
-        pixels[indexes.byte_index] &= ~(1 << indexes.bit_index); 
+        pixels[indexes.screen_byte_index] &= ~(1 << indexes.screen_bit_index); 
     }
 }
 
 void map_memory_to_screen() {
-    surface->pixels = computer_block->screen_out;
+    Uint8* pixels = (Uint8*)surface->pixels;
+
+    for (int x = 0; x < 511; x++) {
+        for (int y = 0; y < 255; y++) {
+            PixelIndex indexes = pixel_coordinate_to_index(x, y); 
+            pixels[indexes.screen_byte_index] = (Uint8)computer_block->screen_out[indexes.memory_byte_index];
+        }
+    }
 }
 
 /* returns state of a pixel. 
@@ -125,9 +139,9 @@ int get_pixel(int x, int y, bool entire_word=false) {
     PixelIndex indexes = pixel_coordinate_to_index(x, y); 
 
     if (entire_word) {
-        return (int)(std::bitset<16>(pixels[indexes.byte_index])).to_ulong(); 
+        return (int)(std::bitset<16>(pixels[indexes.screen_byte_index])).to_ulong(); 
     } else {
-        return (int)(std::bitset<1>(pixels[indexes.byte_index])[indexes.bit_index]);
+        return (int)(std::bitset<1>(pixels[indexes.screen_byte_index])[indexes.screen_bit_index]);
     }
     
 }
@@ -143,8 +157,8 @@ int poll_sim_state() {
         computer_block->kb_in = pressed_key;
 
         // std::cout << sim_time << "\n";
-        std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
-        // std::cout << computer_block->rootp->computer__DOT__outM << std::endl;
+        // std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
+        // std::cout << computer_block->rootp-> << std::endl;
 
         // int state = get_pixel(9, 3, true);
         // std::cout << state << std::endl;
