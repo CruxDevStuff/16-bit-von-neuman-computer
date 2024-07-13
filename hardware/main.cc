@@ -90,7 +90,7 @@ PixelIndex pixel_coordinate_to_index(int x, int y) {
     int memory_byte_index = y * 32 + x / 16;
     int memory_bit_index = 15 - (x % 16); 
 
-    int screen_byte_index = y * 128 + x / 8;
+    int screen_byte_index = y * surface->pitch + x / 8;
     int screen_bit_index = 7 - (x % 8); 
 
     PixelIndex pixel_index; 

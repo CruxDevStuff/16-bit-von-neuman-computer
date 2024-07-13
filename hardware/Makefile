@@ -10,13 +10,19 @@ DMEM_VRLG_TOP = DataMemory
 DMEM_VRLG_SRC = data_memory.v
 DMEM_CPP_SRC = data_memory_tb.cc
 
+#ROM 
+ROM_VRLG_SRC = rom.v 
+
+#PC 
+PC_VRLG_SRC = program_counter.v
+
 SDL_ROOT = /opt/homebrew/opt/sdl2
 CFLAGS = `sdl2-config --cflags`
 LDFLAGS = `sdl2-config --libs`
 
 
 V$(TOP_TARGET).mk: $(VERILOG_SRC)
-	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
+	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) $(PC_VRLG_SRC) $(ROM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS)" -LDFLAGS "$(LDFLAGS)"
 
 all: V$(TOP_TARGET).mk
 	make -C ./obj_dir -f V$(VERILOG_TOP).mk
