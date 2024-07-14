@@ -48,7 +48,7 @@ int create_sdl_window() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI| SDL_WINDOW_MAXIMIZED);
 
     window = SDL_CreateWindow("Hack Computer",
                             SDL_WINDOWPOS_CENTERED,
@@ -60,6 +60,8 @@ int create_sdl_window() {
         return -1;
     }
 
+    // SDL_SetWindowFullscreen(window, window_flags);
+
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // enable vsync
@@ -67,11 +69,16 @@ int create_sdl_window() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    io = &ImGui::GetIO(); 
-    (void)io;
+    io = &ImGui::GetIO(); (void)io;
+    ImFont* font = io->Fonts->AddFontFromFileTTF("/Users/aadhi/Developer/16bit-computer/hardware/SourceSansPro-Regular.ttf", 22.0f);
 
     // Set theme 
     ImGui::StyleColorsDark();
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec4 title_bg = style.Colors[ImGuiCol_TitleBgActive];
+    style.Colors[ImGuiCol_TitleBg] = title_bg;
+    style.Colors[ImGuiCol_TitleBgCollapsed] = title_bg;
 
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
@@ -210,7 +217,7 @@ int poll_sim_state() {
         ImGui::NewFrame();
 
         show_menu_bar(); 
-
+        show_rom_table();
         // std::cout << pressed_key; 
         std::cout << "---------" << std::endl;
         

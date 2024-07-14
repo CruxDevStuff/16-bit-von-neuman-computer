@@ -2,3 +2,4 @@
 #include "imgui.h"
 
 void show_menu_bar();
+void show_rom_table();
