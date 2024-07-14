@@ -1,27 +1,5 @@
 #include "main.h"
 
-const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
-Vcomputer * computer_block = new Vcomputer;
-VerilatedVcdC *m_trace = new VerilatedVcdC;
-
-SDL_Window * window = NULL; 
-SDL_Renderer * renderer = NULL; 
-SDL_Texture * texture = NULL; 
-SDL_Surface * surface = NULL; 
-SDL_Event event_handler;
-
-char * glsl_version = NULL;
-ImGuiIO * io = NULL;
-SDL_GLContext gl_context = NULL;
-
-ImVec4 background_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f); // r, g, b, alpha
-
-int pressed_key = 0; 
-int sim_time = 0; 
-
-bool quit = false;
-bool show_demo_window = true;
-
 int create_sdl_window() {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
