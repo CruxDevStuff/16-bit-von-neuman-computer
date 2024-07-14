@@ -25,11 +25,12 @@ LDFLAGS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVi
 # imgui
 IMGUI_PATH = ../include/imgui
 IMGUI_BACKENDS_PATH = $(IMGUI_PATH)/backends
-IMGUI_FILES = $(IMGUI_PATH)/imgui_demo.cpp $(IMGUI_BACKENDS_PATH)/imgui_impl_sdl2.cpp $(IMGUI_BACKENDS_PATH)/imgui_impl_opengl3.cpp $(IMGUI_PATH)/imgui.cpp $(IMGUI_PATH)/imgui_draw.cpp $(IMGUI_PATH)/imgui_widgets.cpp $(IMGUI_PATH)/imgui_tables.cpp
-IMGUI_INCLUDE = -I$(IMGUI_PATH) -I$(IMGUI_BACKENDS_PATH)
+IMGUI_FILES = $(IMGUI_BACKENDS_PATH)/imgui_impl_sdl2.cpp $(IMGUI_BACKENDS_PATH)/imgui_impl_opengl3.cpp $(IMGUI_PATH)/imgui.cpp $(IMGUI_PATH)/imgui_draw.cpp $(IMGUI_PATH)/imgui_widgets.cpp $(IMGUI_PATH)/imgui_tables.cpp
+IMGUI_INCLUDE = -I$(IMGUI_PATH) -I$(IMGUI_BACKENDS_PATH) 
 
 # Add imgui source files to CPP_SRC
 CPP_SRC += $(IMGUI_FILES)
+CPP_SRC += gui.cc
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
@@ -47,7 +48,7 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 endif
 
 V$(TOP_TARGET).mk: $(VERILOG_SRC)
-	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) $(PC_VRLG_SRC) $(ROM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS) $(IMGUI_INCLUDE)" -LDFLAGS "$(LDFLAGS)"
+	verilator --public -I$(SDL_ROOT)/include/ --trace -cc $(VERILOG_SRC) $(DMEM_VRLG_SRC) $(PC_VRLG_SRC) $(ROM_VRLG_SRC) --top $(VERILOG_TOP) --exe $(CPP_SRC) -o $(TOP_TARGET) -CFLAGS "$(CFLAGS) $(IMGUI_INCLUDE) -I../include/" -LDFLAGS "$(LDFLAGS)"
 
 all: V$(TOP_TARGET).mk
 	make -C ./obj_dir -f V$(VERILOG_TOP).mk

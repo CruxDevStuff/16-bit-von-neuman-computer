@@ -1,19 +1,4 @@
-#include <iostream>
-#include "include/main.h"
-
-#include "SDL.h"
-#include "SDL_timer.h"
-#include "SDL_ttf.h"
-#include "SDL_opengl.h"
-
-#include "include/imgui/imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_opengl3.h"
-
-#include <verilated.h>
-#include "verilated_vcd_c.h"
-#include "Vcomputer.h"
-#include "Vcomputer___024root.h"
+#include "main.h"
 
 const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
 Vcomputer * computer_block = new Vcomputer;
@@ -28,7 +13,8 @@ SDL_Event event_handler;
 char * glsl_version = NULL;
 ImGuiIO * io = NULL;
 SDL_GLContext gl_context = NULL;
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+ImVec4 background_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f); // r, g, b, alpha
 
 int pressed_key = 0; 
 int sim_time = 0; 
@@ -223,7 +209,7 @@ int poll_sim_state() {
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow(&show_demo_window);
+        show_menu_bar(); 
 
         // std::cout << pressed_key; 
         std::cout << "---------" << std::endl;
@@ -231,7 +217,7 @@ int poll_sim_state() {
         // Rendering
         ImGui::Render();
         glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(background_color.x * background_color.w, background_color.y * background_color.w, background_color.z * background_color.w, background_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

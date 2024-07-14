@@ -1,5 +1,21 @@
 #include <string>
+#include <iostream>
 #include <unordered_map>
+#include "gui.h"
+
+#include "SDL.h"
+#include "SDL_timer.h"
+#include "SDL_ttf.h"
+#include "SDL_opengl.h"
+
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_opengl3.h"
+
+#include <verilated.h>
+#include "verilated_vcd_c.h"
+#include "Vcomputer.h"
+#include "Vcomputer___024root.h"
 
 using namespace std;
 
