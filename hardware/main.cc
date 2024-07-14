@@ -18,20 +18,23 @@
 const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
 Vcomputer * computer_block = new Vcomputer;
 VerilatedVcdC *m_trace = new VerilatedVcdC;
-int sim_time = 0; 
 
 SDL_Window * window = NULL; 
 SDL_Renderer * renderer = NULL; 
 SDL_Texture * texture = NULL; 
 SDL_Surface * surface = NULL; 
+SDL_Event event_handler;
 
 char * glsl_version = NULL;
 ImGuiIO * io = NULL;
 SDL_GLContext gl_context = NULL;
+ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 int pressed_key = 0; 
+int sim_time = 0; 
 
-ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+bool quit = false;
+bool show_demo_window = true;
 
 int create_sdl_window() {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -176,9 +179,31 @@ int get_pixel(int x, int y, bool entire_word=false) {
     
 }
 
+void poll_sdl_events() {
+    SDL_StartTextInput();
+
+	while(SDL_PollEvent(&event_handler) != 0) {
+        ImGui_ImplSDL2_ProcessEvent(&event_handler);
+
+        pressed_key = 0;
+        // do things according to user input type
+        if(event_handler.type == SDL_QUIT) {
+            quit = true;
+        }
+
+        if(event_handler.type == SDL_TEXTINPUT) {
+            pressed_key = character_to_code_map[(char*)event_handler.text.text];
+        }
+
+        if (event_handler.type == SDL_KEYDOWN) {
+            // TODO: not text keys like : enter, backspace handled here.
+        }
+    } 
+
+    SDL_StopTextInput();
+}
+
 int poll_sim_state() {
-    SDL_Event event_handler;
-    bool quit = false;
     
     while(!quit) {
         tick_clock(computer_block); 
@@ -190,36 +215,14 @@ int poll_sim_state() {
         // std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
         // std::cout << computer_block->rootp-> << std::endl;
 
-        // int state = get_pixel(9, 3, true);
-        // std::cout << state << std::endl;
-
         // poll sdl
-        SDL_StartTextInput();
-
-		while(SDL_PollEvent(&event_handler) != 0) {
-            ImGui_ImplSDL2_ProcessEvent(&event_handler);
-
-            pressed_key = 0;
-            // do things according to user input type
-            if(event_handler.type == SDL_QUIT) {
-                quit = true;
-            }
-
-            if(event_handler.type == SDL_TEXTINPUT) {
-                pressed_key = character_to_code_map[(char*)event_handler.text.text];
-            }
-
-            if (event_handler.type == SDL_KEYDOWN) {
-                // TODO: not text keys like : enter, backspace handled here.
-            }
-        } 
+        poll_sdl_events(); 
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        bool show_demo_window = true;
         ImGui::ShowDemoWindow(&show_demo_window);
 
         // std::cout << pressed_key; 
@@ -230,12 +233,9 @@ int poll_sim_state() {
         glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
-
-        SDL_StopTextInput();
-      
 	}
     
     end_dump(); 
