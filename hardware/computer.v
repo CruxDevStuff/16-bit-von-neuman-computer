@@ -47,7 +47,8 @@ module computer(
 
     ROM rom(
         .adr_in(pc_out),
-        .d_out(rom_out)
+        .d_out(rom_out),
+        .load(1)
     );
 
     DataMemory data_mem(

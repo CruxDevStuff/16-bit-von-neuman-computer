@@ -38,19 +38,19 @@ int create_sdl_window() {
         return -1;
     }
 
-    // SDL_SetWindowFullscreen(window, window_flags);
-
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // enable vsync
 
-    // Setup Dear ImGui context
+    // setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     io = &ImGui::GetIO(); (void)io;
-    ImFont* font = io->Fonts->AddFontFromFileTTF("/Users/aadhi/Developer/16bit-computer/hardware/SourceSansPro-Regular.ttf", 22.0f);
 
-    // Set theme 
+    // set custom font
+    ImFont* font = io->Fonts->AddFontFromFileTTF("include/Cousine-Regular.ttf", 22.0f);
+
+    // set theme 
     ImGui::StyleColorsDark();
 
     ImGuiStyle& style = ImGui::GetStyle();
@@ -174,32 +174,44 @@ void poll_sdl_events() {
     SDL_StopTextInput();
 }
 
-int poll_sim_state() {
+// cache the contents of the ROM once at start 
+uint16_t* get_rom_contents() {
+    tick_clock(computer_block); 
+    static uint16_t contents[32768];
+
+    for (int i = 0; i < 32768; i++) {
+        contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__rom__DOT__memory[i]).to_ulong();
+    }
     
+    return contents;
+}
+
+int poll_sim_state() {
+    uint16_t* contents = get_rom_contents();
+
     while(!quit) {
         tick_clock(computer_block); 
-        // map_memory_to_screen();
 
         computer_block->kb_in = pressed_key;
 
         // std::cout << sim_time << "\n";
         // std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
-        // std::cout << computer_block->rootp-> << std::endl;
 
         // poll sdl
         poll_sdl_events(); 
 
-        // Start the Dear ImGui frame
+        // start of a new Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
+        // call all GUI stuff
         show_menu_bar(); 
-        show_rom_table();
-        // std::cout << pressed_key; 
-        std::cout << "---------" << std::endl;
+        show_rom_table(contents);
+
+        // std::cout << "---------" << std::endl;
         
-        // Rendering
+        // render 
         ImGui::Render();
         glViewport(0, 0, (int)io->DisplaySize.x, (int)io->DisplaySize.y);
         glClearColor(background_color.x * background_color.w, background_color.y * background_color.w, background_color.z * background_color.w, background_color.w);
