@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <iostream>
 #include <random>
@@ -48,7 +49,9 @@ bool quit = false;
 bool show_demo_window = true;
 
 unsigned char* texture_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT];
-GLuint texture_id = NULL;
+unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
+
+GLuint texture_id;
 
 struct PixelIndex {
     // index of pixel in the hack computer memory map 

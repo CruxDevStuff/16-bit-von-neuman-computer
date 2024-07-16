@@ -51,3 +51,9 @@ void show_rom_table(uint16_t *contents, uint16_t pc_adr) {
     ImGui::SetWindowPos(work_pos, true);
     ImGui::End();
 }
+
+void show_display(GLuint texture_id) {
+    ImGui::Begin("Display");
+    ImGui::Image((void*)(intptr_t)texture_id, ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0, 0, 0, 0));
+    ImGui::End();
+}

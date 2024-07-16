@@ -7,16 +7,7 @@ int get_random_flip(int const a = 255, int const b = 0) {
   return (dis(gen) == 1)? a : b;
 }
 
-GLuint create_display_texture(int width, int height, uint8_t* screen_data) {
-    unsigned char* rgb_data = new unsigned char[width * height * 3];
-
-    // convert hack computer screen data(black-0 and white-0) to a opengl RGB texture for rendering
-    for (int i = 0; i < (width * height); ++i) {
-        rgb_data[i * 3 + 0] = screen_data[i]; // R
-        rgb_data[i * 3 + 1] = screen_data[i]; // G
-        rgb_data[i * 3 + 2] = screen_data[i]; // B
-    }
-
+GLuint create_display_texture(int width, int height) {
     GLuint texture_id;
     glGenTextures(1, &texture_id);
     glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -25,7 +16,6 @@ GLuint create_display_texture(int width, int height, uint8_t* screen_data) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    delete[] rgb_data; 
     return texture_id;
 }
 
@@ -71,8 +61,7 @@ int create_sdl_window() {
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // enable vsync
 
-    texture_id = create_display_texture(SCREEN_WIDTH, SCREEN_HEIGHT, texture_data);
-    delete[] texture_data;
+    texture_id = create_display_texture(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -192,6 +181,12 @@ void grayscale_to_rgb_data(uint8_t* rgb_out, uint16_t* grayscale_in) {
     }
 }
 
+void update_display_texture() {
+    grayscale_to_rgb_data(rgb_data, computer_block->screen_out);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, rgb_data);
+}
+
 int poll_sim_state() {
     uint16_t* contents = get_rom_contents();
     unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
@@ -209,10 +204,7 @@ int poll_sim_state() {
         // poll sdl
         poll_sdl_events(); 
 
-        grayscale_to_rgb_data(rgb_data, computer_block->screen_out);
-
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, rgb_data);
+        update_display_texture();
 
         // start of a new Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -222,10 +214,8 @@ int poll_sim_state() {
         // call all GUI stuff
         show_menu_bar(); 
         show_rom_table(contents, 0);
+        show_display(texture_id);
 
-        ImGui::Begin("Display");
-        ImGui::Image((void*)texture_id, ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0, 0, 0, 0));
-        ImGui::End();
         // std::cout << "---------" << std::endl;
         
         // render 
