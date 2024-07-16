@@ -1,5 +1,34 @@
 #include "main.h"
 
+int get_random_flip(int const a = 255, int const b = 0) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(1, 2);
+  return (dis(gen) == 1)? a : b;
+}
+
+GLuint create_display_texture(int width, int height, uint8_t* screen_data) {
+    unsigned char* rgb_data = new unsigned char[width * height * 3];
+
+    // convert hack computer screen data(black-0 and white-0) to a opengl RGB texture for rendering
+    for (int i = 0; i < (width * height); ++i) {
+        rgb_data[i * 3 + 0] = screen_data[i]; // R
+        rgb_data[i * 3 + 1] = screen_data[i]; // G
+        rgb_data[i * 3 + 2] = screen_data[i]; // B
+    }
+
+    GLuint texture_id;
+    glGenTextures(1, &texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, rgb_data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    delete[] rgb_data; 
+    return texture_id;
+}
+
 int create_sdl_window() {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
@@ -41,6 +70,9 @@ int create_sdl_window() {
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
     SDL_GL_SetSwapInterval(1); // enable vsync
+
+    texture_id = create_display_texture(SCREEN_WIDTH, SCREEN_HEIGHT, texture_data);
+    delete[] texture_data;
 
     // setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -108,48 +140,6 @@ PixelIndex pixel_coordinate_to_index(int x, int y) {
     return pixel_index; 
 }
 
-void update_individual_pixel(int x, int y, bool state) {
-    // TODO: check pixel coordinate range 
-    Uint8* pixels = (Uint8*)surface->pixels;
-
-    PixelIndex indexes = pixel_coordinate_to_index(x, y); 
-
-    if (state == true) {
-        pixels[indexes.screen_byte_index] |= (1 << indexes.screen_bit_index); 
-    } else if (state == false) {
-        pixels[indexes.screen_byte_index] &= ~(1 << indexes.screen_bit_index); 
-    }
-}
-
-void map_memory_to_screen() {
-    Uint8* pixels = (Uint8*)surface->pixels;
-
-    for (int x = 0; x < 511; x++) {
-        for (int y = 0; y < 255; y++) {
-            PixelIndex indexes = pixel_coordinate_to_index(x, y); 
-            pixels[indexes.screen_byte_index] = (Uint8)computer_block->screen_out[indexes.memory_byte_index];
-        }
-    }
-}
-
-/* returns state of a pixel. 
-set "entire_word" to "true" to get the entire memory block(16 bits in decimal) 
-that the pixel belongs to*/
-
-int get_pixel(int x, int y, bool entire_word=false) {
-    // // returns 0 - black, 1 - white, -1 - invalid
-    Uint16* pixels = (Uint16*)surface->pixels;
-
-    PixelIndex indexes = pixel_coordinate_to_index(x, y); 
-
-    if (entire_word) {
-        return (int)(std::bitset<16>(pixels[indexes.screen_byte_index])).to_ulong(); 
-    } else {
-        return (int)(std::bitset<1>(pixels[indexes.screen_byte_index])[indexes.screen_bit_index]);
-    }
-    
-}
-
 void poll_sdl_events() {
     SDL_StartTextInput();
 
@@ -186,10 +176,29 @@ uint16_t* get_rom_contents() {
     return contents;
 }
 
+void generate_random_texture() {
+    for (int y = 0; y < SCREEN_HEIGHT; ++y) {
+        for (int x = 0; x < SCREEN_WIDTH; ++x) {
+            texture_data[y * SCREEN_WIDTH + x] = get_random_flip(); // Example pattern
+        }
+    }
+}
+
+void grayscale_to_rgb_data(uint8_t* rgb_out, uint16_t* grayscale_in) {
+    for (int i = 0; i < (SCREEN_WIDTH * SCREEN_HEIGHT); ++i) {
+        rgb_out[i * 3 + 0] = grayscale_in[i/16]; // R
+        rgb_out[i * 3 + 1] = grayscale_in[i/16]; // G
+        rgb_out[i * 3 + 2] = grayscale_in[i/16]; // B
+    }
+}
+
 int poll_sim_state() {
     uint16_t* contents = get_rom_contents();
+    unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 
     while(!quit) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+
         tick_clock(computer_block); 
 
         computer_block->kb_in = pressed_key;
@@ -200,6 +209,11 @@ int poll_sim_state() {
         // poll sdl
         poll_sdl_events(); 
 
+        grayscale_to_rgb_data(rgb_data, computer_block->screen_out);
+
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, rgb_data);
+
         // start of a new Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
@@ -207,8 +221,11 @@ int poll_sim_state() {
 
         // call all GUI stuff
         show_menu_bar(); 
-        show_rom_table(contents);
+        show_rom_table(contents, 0);
 
+        ImGui::Begin("Display");
+        ImGui::Image((void*)texture_id, ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0, 0, 0, 0));
+        ImGui::End();
         // std::cout << "---------" << std::endl;
         
         // render 
@@ -219,6 +236,13 @@ int poll_sim_state() {
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
+
+        // Calculate the loop rate (iterations per second)
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> duration = end_time - start_time;
+        double duration_seconds = duration.count();
+        double loop_rate = 1/duration_seconds * 1e9;
+        // std::cout << loop_rate << std::endl; // print loop rate in hz
 	}
     
     end_dump(); 
@@ -236,7 +260,7 @@ int poll_sim_state() {
 }
 
 int main() {
-    int ret; 
+    int ret;
 
     start_dump(); 
 

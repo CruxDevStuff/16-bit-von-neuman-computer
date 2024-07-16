@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include <random>
+#include <chrono>
 #include <unordered_map>
 #include "gui.h"
 
@@ -19,8 +21,8 @@
 
 using namespace std;
 
-#define SCREEN_HEIGHT 256*2
-#define SCREEN_WIDTH 512*2
+#define SCREEN_HEIGHT 256
+#define SCREEN_WIDTH 512
 #define MAX_SIM_TIME 20 // clock edges to simulate
 
 const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
@@ -44,6 +46,9 @@ int sim_time = 0;
 
 bool quit = false;
 bool show_demo_window = true;
+
+unsigned char* texture_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT];
+GLuint texture_id = NULL;
 
 struct PixelIndex {
     // index of pixel in the hack computer memory map 

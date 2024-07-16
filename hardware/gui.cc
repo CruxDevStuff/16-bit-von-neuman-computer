@@ -10,20 +10,10 @@ void show_menu_bar() {
     }
 }
 
-void show_rom_table(uint16_t *contents) {
-    static ImGuiTableFlags table_flags = ImGuiTableFlags_Borders | 
-                                    ImGuiTableFlags_NoSavedSettings;
+void show_rom_table(uint16_t *contents, uint16_t pc_adr) {
+    ImU32 current_row_color = ImGui::GetColorU32(ImVec4(255, 0, 0, 0.5f));
 
-    static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove |
-                                    ImGuiWindowFlags_NoResize |
-                                    ImGuiWindowFlags_NoCollapse |
-                                    ImGuiWindowFlags_NoSavedSettings |
-                                    ImGuiWindowFlags_AlwaysAutoResize;
-
-    static ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthStretch | 
-                                    ImGuiTableColumnFlags_NoResize;
-
-    ImGui::Begin("Memory", NULL, window_flags);
+    ImGui::Begin("ROM", NULL, window_flags);
 
     if (ImGui::BeginTable("ROM table", 2, table_flags)) {
             // We could also set ImGuiTableFlags_SizingFixedFit on the table and all columns will default to ImGuiTableColumnFlags_WidthFixed.
@@ -36,6 +26,11 @@ void show_rom_table(uint16_t *contents) {
                 auto bit_string = std::bitset<16>(contents[row]).to_string().c_str();
                 
                 ImGui::TableNextRow();
+
+                if (row == pc_adr) {
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, current_row_color);
+                }
+
                 for (int column = 0; column < 2; column++) {
                     ImGui::TableSetColumnIndex(column);
                     if (column == 0) {

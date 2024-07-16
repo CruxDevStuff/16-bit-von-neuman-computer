@@ -12,13 +12,13 @@ module DataMemory(
 
     // set screen memory to initialise a half white and half black screen patern
     initial begin
-    //    for (integer i=16383 ; i < 20479; i++) begin
+        for (integer i=16383 ; i < 20479; i++) begin
+            memory[i] = 65535;
+        end
+    //    for (integer i=16383 ; i < 24575; i++) begin
     //         memory[i] = 65535;
     //    end
-       for (integer i=16383 ; i < 24575; i++) begin
-            memory[i] = 65535;
-       end
-       memory[16383] = 16'b0101010101010101;
+    //    memory[16383] = 16'b0101010101010101;
     end
 
     always @(posedge clk) begin
