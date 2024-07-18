@@ -48,7 +48,7 @@ int create_sdl_window() {
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI| SDL_WINDOW_MAXIMIZED);
 
-    window = SDL_CreateWindow("Hack Computer",
+    window = SDL_CreateWindow("Hack Computer Hardware Simulator",
                             SDL_WINDOWPOS_CENTERED,
                             SDL_WINDOWPOS_CENTERED,
                             SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -154,16 +154,28 @@ void poll_sdl_events() {
     SDL_StopTextInput();
 }
 
-// cache the contents of the ROM once at start 
+// cache the rom_contents of the ROM once at start 
 uint16_t* get_rom_contents() {
     tick_clock(computer_block); 
-    static uint16_t contents[32768];
+    static uint16_t rom_contents[32768];
 
     for (int i = 0; i < 32768; i++) {
-        contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__rom__DOT__memory[i]).to_ulong();
+        rom_contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__rom__DOT__memory[i]).to_ulong();
     }
     
-    return contents;
+    return rom_contents;
+}
+
+// get RAM contents 
+uint16_t* get_ram_contents() {
+    tick_clock(computer_block); 
+    static uint16_t ram_contents[24575];
+
+    for (int i = 0; i < 24575; i++) {
+        ram_contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__data_mem__DOT__memory[i]).to_ulong();
+    }
+    
+    return ram_contents;
 }
 
 void generate_random_texture() {
@@ -189,7 +201,9 @@ void update_display_texture() {
 }
 
 int poll_sim_state() {
-    uint16_t* contents = get_rom_contents();
+    uint16_t* rom_contents = get_rom_contents();
+    uint16_t* ram_contents = get_ram_contents();
+
     unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 
     while(!quit) {
@@ -214,9 +228,10 @@ int poll_sim_state() {
 
         // call all GUI stuff
         show_menu_bar(); 
-        show_rom_table(contents, 0);
-        show_display(texture_id);
-
+        show_rom_window(rom_contents, 0);
+        show_display_window(texture_id);
+        show_ram_window(ram_contents, 0);
+        show_cpu_window(); 
         // std::cout << "---------" << std::endl;
         
         // render 
