@@ -90,14 +90,16 @@ void show_ram_window(uint16_t *contents, uint16_t cur_adr) {
 
         ImGui::TableHeadersRow();
 
-        for (int row = 0; row < 20; row++) { // Increase rows to demonstrate scrolling
+        for (int row = 0; row <= 24574; row++) { // Increase rows to demonstrate scrolling
             ImGui::TableNextRow();
+            auto bit_string = std::bitset<16>(contents[row]).to_string().c_str();
+
             for (int column = 0; column < 2; column++) {
                 ImGui::TableSetColumnIndex(column);
                 if (column == 0) {
-                    ImGui::Text("24575");
+                    ImGui::Text("%d", row);
                 } else if (column == 1) {
-                    ImGui::Text("0101010101010011");
+                    ImGui::Text("%s", bit_string);
                 }
             }
         }
@@ -117,16 +119,12 @@ void show_ram_window(uint16_t *contents, uint16_t cur_adr) {
         ImGui::TableSetupColumn("Data");
         ImGui::TableHeadersRow();
         
-        for (int row = 0; row < 1; row++) { // Increase rows to demonstrate scrolling
+        for (int row = 0; row < 1; row++) { 
             ImGui::TableNextRow();
-            for (int column = 0; column < 2; column++) {
-                ImGui::TableSetColumnIndex(column);
-                if (column == 0) {
-                    ImGui::Text("436567");
-                } else if (column == 1) {
-                    ImGui::Text("0101010101010");
-                }
-            } 
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("24575");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Text("%d", contents[24575]);
         }
 
         ImGui::EndTable();

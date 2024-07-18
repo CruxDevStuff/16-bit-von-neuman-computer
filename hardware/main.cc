@@ -154,12 +154,11 @@ void poll_sdl_events() {
     SDL_StopTextInput();
 }
 
-// cache the rom_contents of the ROM once at start 
 uint16_t* get_rom_contents() {
     tick_clock(computer_block); 
     static uint16_t rom_contents[32768];
 
-    for (int i = 0; i < 32768; i++) {
+    for (int i = 0; i <= 32768; i++) {
         rom_contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__rom__DOT__memory[i]).to_ulong();
     }
     
@@ -168,10 +167,9 @@ uint16_t* get_rom_contents() {
 
 // get RAM contents 
 uint16_t* get_ram_contents() {
-    tick_clock(computer_block); 
-    static uint16_t ram_contents[24575];
+    static uint16_t ram_contents[24576];
 
-    for (int i = 0; i < 24575; i++) {
+    for (int i = 0; i <= 24576; i++) {
         ram_contents[i] = (int)std::bitset<16>(computer_block->rootp->computer__DOT__data_mem__DOT__memory[i]).to_ulong();
     }
     
@@ -201,7 +199,9 @@ void update_display_texture() {
 }
 
 int poll_sim_state() {
-    uint16_t* rom_contents = get_rom_contents();
+    // cache the rom_contents of the ROM once at start 
+    uint16_t* rom_contents = get_rom_contents(); 
+
     uint16_t* ram_contents = get_ram_contents();
 
     unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
@@ -212,6 +212,7 @@ int poll_sim_state() {
         tick_clock(computer_block); 
 
         computer_block->kb_in = pressed_key;
+        ram_contents = get_ram_contents();
 
         // std::cout << sim_time << "\n";
         // std::cout << "CURRENT KEY : " << computer_block->rootp->computer__DOT__data_mem__DOT__memory[24575] << std::endl;
