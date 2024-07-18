@@ -4,7 +4,6 @@
 #include <random>
 #include <chrono>
 #include <unordered_map>
-#include "gui.h"
 
 #include "SDL.h"
 #include "SDL_timer.h"

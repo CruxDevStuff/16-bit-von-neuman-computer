@@ -1,4 +1,5 @@
 #include "main.h"
+#include "gui.h"
 
 int get_random_flip(int const a = 255, int const b = 0) {
   std::random_device rd;

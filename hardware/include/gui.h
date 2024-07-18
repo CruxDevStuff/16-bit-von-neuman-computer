@@ -22,3 +22,5 @@ static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove |
 
 static ImGuiTableColumnFlags column_flags = ImGuiTableColumnFlags_WidthStretch | 
                                 ImGuiTableColumnFlags_NoResize;
+                                
+

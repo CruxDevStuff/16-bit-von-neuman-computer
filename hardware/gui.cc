@@ -1,5 +1,7 @@
 #include "gui.h"
 
+ImVec2 rom_window_size;
+
 void show_menu_bar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -46,14 +48,20 @@ void show_rom_table(uint16_t *contents, uint16_t pc_adr) {
     }
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    rom_window_size = ImGui::GetWindowSize();
     ImVec2 work_pos = viewport->WorkPos; 
-    ImVec2 work_size = viewport->WorkSize;
     ImGui::SetWindowPos(work_pos, true);
     ImGui::End();
 }
 
 void show_display(GLuint texture_id) {
-    ImGui::Begin("Display");
+    ImGui::Begin("Display", NULL, window_flags);
     ImGui::Image((void*)(intptr_t)texture_id, ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0, 0, 0, 0));
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImVec2 work_pos = viewport->WorkPos; 
+    work_pos.x += rom_window_size.x; // anchor to right side of ROM window
+    ImGui::SetWindowPos(work_pos, true);
+
     ImGui::End();
 }
