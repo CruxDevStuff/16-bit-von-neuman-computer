@@ -1,3 +1,7 @@
+/*
+NOT USED 
+*/
+
 #include <iostream>
 #include "SDL.h"
 #include "SDL_timer.h"
