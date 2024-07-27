@@ -52,6 +52,9 @@ unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 
 GLuint texture_id;
 
+bool run = 0;
+uint16_t prev_pc; 
+
 struct PixelIndex {
     // index of pixel in the hack computer memory map 
     int memory_byte_index = -1; 

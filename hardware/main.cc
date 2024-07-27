@@ -219,10 +219,13 @@ int poll_sim_state() {
 
     while(!quit) {
         auto start_time = std::chrono::high_resolution_clock::now();
+        
+        if (run) {
+            prev_pc = computer_block->rootp->computer__DOT__pc_out;
+            tick_clock(computer_block); 
+            computer_block->kb_in = pressed_key;
+        }
 
-        tick_clock(computer_block); 
-
-        computer_block->kb_in = pressed_key;
         ram_contents = get_ram_contents();
 
         // std::cout << sim_time << "\n";
@@ -240,12 +243,14 @@ int poll_sim_state() {
 
         // call all GUI stuff
         show_menu_bar(); 
-        show_rom_window(rom_contents, 0);
+        show_rom_window(rom_contents, computer_block->rootp->computer__DOT__pc_out);
         show_display_window(texture_id);
-        show_ram_window(ram_contents, 0);
-        show_cpu_window(computer_block->rootp->computer__DOT__pc_out, 
+        show_ram_window(ram_contents, computer_block->rootp->computer__DOT__cpu__DOT__A_out);
+        show_cpu_window(computer_block->rootp->computer__DOT__pc_out,
+                        prev_pc, 
                         computer_block->rootp->computer__DOT__cpu__DOT__A_out, 
-                        computer_block->rootp->computer__DOT__cpu__DOT__D_out); 
+                        computer_block->rootp->computer__DOT__cpu__DOT__D_out,
+                        run); 
         
         std::cout << computer_block->rootp->computer__DOT__pc_out << std::endl;
         std::cout << "---------" << std::endl;

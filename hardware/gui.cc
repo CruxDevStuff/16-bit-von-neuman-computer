@@ -5,6 +5,8 @@ ImVec2 ram_window_size;
 ImVec2 cpu_window_size;
 ImVec2 display_window_size;
 
+bool play_pause = 0;
+
 void dump_array_to_file_binary(const uint16_t* array, size_t size, const std::string& filename) {
     std::ofstream outfile(filename);
     
@@ -77,11 +79,12 @@ void show_rom_window(uint16_t *contents, uint16_t pc_adr) {
 }
 
 void show_display_window(GLuint texture_id) {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
     ImGui::Begin("Display", NULL, window_flags);
     ImGui::Image((void*)(intptr_t)texture_id, ImVec2(SCREEN_WIDTH, SCREEN_HEIGHT), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0, 0, 0, 0));
     
     // anchor to right side of ROM window
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
     display_window_size = ImGui::GetWindowSize();
     ImVec2 work_pos = viewport->WorkPos; 
     ImVec2 anchor_pos = ImVec2(work_pos.x + rom_window_size.x, work_pos.y);
@@ -119,6 +122,11 @@ void show_ram_window(uint16_t *contents, uint16_t cur_adr) {
 
             for (int column = 0; column < 2; column++) {
                 ImGui::TableSetColumnIndex(column);
+
+                if (row == cur_adr) {
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, current_row_color);
+                } 
+
                 if (column == 0) {
                     ImGui::Text("%d", row);
                 } else if (column == 1) {
@@ -164,27 +172,39 @@ void show_ram_window(uint16_t *contents, uint16_t cur_adr) {
     ImGui::End();
 }
 
-void show_cpu_window(uint16_t pc, uint16_t a_reg, uint16_t d_reg) {
+void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_reg, bool &run) {
+    std::cout << run << "\n";
+
+    if (!play_pause) {
+        if (pc == prev_pc+1) {
+            run = 0;
+        }
+    }
+
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    cpu_window_size = ImGui::GetWindowSize();
     cpu_window_size = ImVec2(viewport->WorkSize.x - (rom_window_size.x + ram_window_size.x), viewport->WorkSize.y - display_window_size.y); 
     ImGui::SetNextWindowSize(cpu_window_size); 
 
     ImGui::Begin("CPU", NULL, window_flags);
-    // Create a button
+
+    if (ImGui::Button(run ? "PAUSE" : "PLAY")) {
+        run = !run;
+        play_pause = !play_pause;
+    }
+
+    ImGui::SameLine();
     if (ImGui::Button("STEP")) {
         // Action to take when the button is clicked
-        ImGui::Text("Button was clicked!");
+        run = 1;
+        play_pause = 0; 
     }
 
     if (ImGui::BeginTable("CPU table", 2, table_flags)) {
-            ImGui::TableSetupColumn("Address");
+            ImGui::TableSetupColumn("Name");
             ImGui::TableSetupColumn("Data");
             ImGui::TableHeadersRow();
-            // pc
-            // alu control bits
-            // alu out bits 
-            // A register 
-            // D register
+
             for (int row = 0; row < 6; row++) { 
                 ImGui::TableNextRow();
                 switch (row) {
@@ -241,7 +261,7 @@ void show_cpu_window(uint16_t pc, uint16_t a_reg, uint16_t d_reg) {
         ImGui::EndTable();
     }
 
-    ImGui::SetWindowPos(ImVec2(viewport->WorkPos.x + rom_window_size.x, viewport->WorkPos.y + display_window_size.y));
+    ImGui::SetWindowPos(ImVec2(viewport->WorkPos.x + rom_window_size.x, (viewport->WorkSize.y - cpu_window_size.y + 30)));
     ImGui::End();
 }
 

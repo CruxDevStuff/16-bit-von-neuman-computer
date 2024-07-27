@@ -16,7 +16,7 @@ void show_menu_bar();
 void show_rom_window(uint16_t *contents, uint16_t pc_adr);
 void show_ram_window(uint16_t *contents, uint16_t cur_adr);
 void show_display_window(GLuint texture_id);
-void show_cpu_window(uint16_t pc, uint16_t a_reg, uint16_t d_reg);
+void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_reg, bool &run);
 static ImGuiTableFlags table_flags = ImGuiTableFlags_Borders | 
                                 ImGuiTableFlags_NoSavedSettings;
                                 // ImGuiTableFlags_RowBg;

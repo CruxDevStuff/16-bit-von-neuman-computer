@@ -12,10 +12,11 @@ module DataMemory(
 
     // uncomment to set a line pattern during initialization
     initial begin
-        for (integer i=16384 ; i < 24576; i++) begin
-                // memory[i] = 65535;
-                memory[i] = 16'b0011001100110011;
-        end
+        memory[0] = 50;
+        // for (integer i=16384 ; i < 24576; i++) begin
+        //         // memory[i] = 65535;
+        //         memory[i] = 16'b0011001100110011;
+        // end
     //    memory[16383] = 16'b0101010101010101;
     end
 
