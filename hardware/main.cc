@@ -184,52 +184,22 @@ void generate_random_texture() {
     }
 }
 
-// void grayscale_to_rgb_data(uint8_t* rgb_out, uint16_t* grayscale_in) {
-//     for (int i = 0; i <= (SCREEN_WIDTH * SCREEN_HEIGHT); ++i) {
-//         rgb_out[i * 3 + 0] = grayscale_in[(i/16)]; // R
-//         rgb_out[i * 3 + 1] = grayscale_in[(i/16)]; // G
-//         rgb_out[i * 3 + 2] = grayscale_in[(i/16)]; // B
-
-//         // if (i % 2 == 0) {
-//         //     rgb_out[i * 3 + 0] = 0; // R {
-//         //     rgb_out[i * 3 + 1] = 0; // G {
-//         //     rgb_out[i * 3 + 2] = 0; // B
-//         // } else {
-//         //     rgb_out[i * 3 + 0] = 1; // R {
-//         //     rgb_out[i * 3 + 1] = 1; // G {
-//         //     rgb_out[i * 3 + 2] = 1; // B
-//         // }
-//     }
-// }
-
-// void grayscale_to_rgb_data(uint8_t* rgb_out, const uint16_t* grayscale_in, int width, int height) {
-//     for (int y = 0; y < height; ++y) {
-//         for (int x = 0; x < width; ++x) {
-//             int grayscale_index = (y * width + x) / 16;
-//             int bit_offset = 15 - (x % 16);  // Start from most significant bit
-            
-//             uint8_t pixel_value = (grayscale_in[grayscale_index] & (1 << bit_offset)) ? 255 : 0;
-            
-//             int rgb_index = (y * width + x) * 3;
-//             rgb_out[rgb_index + 0] = pixel_value;  // R
-//             rgb_out[rgb_index + 1] = pixel_value;  // G
-//             rgb_out[rgb_index + 2] = pixel_value;  // B
-//         }
-//     }
-// }
-
 void grayscale_to_rgb_data(uint8_t* rgb_out, const uint16_t* grayscale_in, int width, int height) {
-    int total_pixels = width * height;
-    for (int pixel = 0; pixel < total_pixels; ++pixel) {
-        int grayscale_index = pixel / 16;
-        int bit_offset = 15 - (pixel % 16);  // Start from most significant bit
-        
-        uint8_t pixel_value = (grayscale_in[grayscale_index] & (1 << bit_offset)) ? 255 : 0;
-        
-        int rgb_index = pixel * 3;
-        rgb_out[rgb_index + 0] = pixel_value;  // R
-        rgb_out[rgb_index + 1] = pixel_value;  // G
-        rgb_out[rgb_index + 2] = pixel_value;  // B
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int grayscale_pixel = y * width + x;
+            int grayscale_index = grayscale_pixel / 16;
+            int bit_offset = 15 - (grayscale_pixel % 16);  // Start from most significant bit
+            
+            uint8_t pixel_value = (grayscale_in[grayscale_index] & (1 << bit_offset)) ? 255 : 0;
+            
+            // Flip both x and y coordinates
+            int rgb_pixel = (height - 1 - y) * width + (width - 1 - x);
+            int rgb_index = rgb_pixel * 3;
+            rgb_out[rgb_index + 0] = pixel_value;  // R
+            rgb_out[rgb_index + 1] = pixel_value;  // G
+            rgb_out[rgb_index + 2] = pixel_value;  // B
+        }
     }
 }
 

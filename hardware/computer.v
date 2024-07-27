@@ -57,8 +57,7 @@ module CPU (
     assign no_bit = instruction[6];
     
     // PC load wires
-    // TODO: IMPLEMENT JUMP INSTRUCTIONSSS
-    // use or gate and status bits of alu to change PC load
+    // JUMP 
     assign jgt_status = ~(zr_status | ng_status);
     assign jeq_status = zr_status;
     assign jge_status = ~(ng_status);
@@ -67,15 +66,6 @@ module CPU (
     assign jle_status = (zr_status | ng_status);
     assign jmp_status = 1;
     assign null_status = 0;
-
-    // assign jump_condition = (jgt_status | jeq_status | 
-    //                   jge_status | jlt_status |
-    //                   jlt_status | jne_status |
-    //                   jle_status | jmp_status );
-
-    // assign jump_bits_status = ((instruction[0] | instruction[1] | instruction[2]) & instruction[15]);
-    
-    // assign pc_load = (jump_condition & jump_bits_status);
 
     mux1_8to1 pc_load_mux(
         .sel(instruction[2:0]),
@@ -161,7 +151,6 @@ module computer(
     wire [15:0] cpu_data_out;
     wire [15:0] rom_out;
 
-    // TODO: instantiate CPU
     CPU cpu( 
         .clk(clk),
         .reset(1),
