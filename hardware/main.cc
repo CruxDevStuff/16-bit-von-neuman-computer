@@ -221,6 +221,7 @@ int poll_sim_state() {
         auto start_time = std::chrono::high_resolution_clock::now();
         
         if (run) {
+            computer_block->reset = reset_computer;
             prev_pc = computer_block->rootp->computer__DOT__pc_out;
             tick_clock(computer_block); 
             computer_block->kb_in = pressed_key;
@@ -250,8 +251,12 @@ int poll_sim_state() {
                         prev_pc, 
                         computer_block->rootp->computer__DOT__cpu__DOT__A_out, 
                         computer_block->rootp->computer__DOT__cpu__DOT__D_out,
-                        run); 
+                        run,
+                        reset_computer,
+                        computer_block->rootp->computer__DOT__cpu__DOT__alu_output
+                        ); 
         
+        std::cout << reset_computer << std::endl;           
         std::cout << computer_block->rootp->computer__DOT__pc_out << std::endl;
         std::cout << "---------" << std::endl;
         
@@ -269,7 +274,7 @@ int poll_sim_state() {
         std::chrono::duration<double> duration = end_time - start_time;
         double duration_seconds = duration.count();
         double loop_rate = 1/duration_seconds * 1e9;
-        std::cout << loop_rate << std::endl; // print loop rate in hz
+        // std::cout << loop_rate << std::endl; // print loop rate in hz
 	}
     
     end_dump(); 

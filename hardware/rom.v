@@ -7,7 +7,9 @@ module ROM(
 
     reg [15:0] memory [32767:0]; 
 
-    parameter memory_file = "rect.hack";
+    // parameter memory_file = "rect.hack";
+    parameter memory_file = "add.hack";
+    // parameter memory_file = "sub.hack";
     
     initial begin
         $readmemb(memory_file, memory);

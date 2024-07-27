@@ -26,10 +26,10 @@ void dump_array_to_file_binary(const uint16_t* array, size_t size, const std::st
 
 void show_menu_bar() {
     if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            ImGui::MenuItem("Load ROM"); 
-            ImGui::EndMenu();
-        }
+        // if (ImGui::BeginMenu("File")) {
+        //     ImGui::MenuItem("Load ROM"); 
+        //     ImGui::EndMenu();
+        // }
         ImGui::EndMainMenuBar();
     }
 }
@@ -172,19 +172,16 @@ void show_ram_window(uint16_t *contents, uint16_t cur_adr) {
     ImGui::End();
 }
 
-void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_reg, bool &run) {
-    std::cout << run << "\n";
+void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_reg, bool &run, bool &reset_computer, uint16_t alu_out) {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    cpu_window_size = ImVec2(viewport->WorkSize.x - (rom_window_size.x + ram_window_size.x), viewport->WorkSize.y - display_window_size.y); 
+    ImGui::SetNextWindowSize(cpu_window_size); 
 
     if (!play_pause) {
         if (pc == prev_pc+1) {
             run = 0;
         }
     }
-
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    cpu_window_size = ImGui::GetWindowSize();
-    cpu_window_size = ImVec2(viewport->WorkSize.x - (rom_window_size.x + ram_window_size.x), viewport->WorkSize.y - display_window_size.y); 
-    ImGui::SetNextWindowSize(cpu_window_size); 
 
     ImGui::Begin("CPU", NULL, window_flags);
 
@@ -195,7 +192,6 @@ void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_r
 
     ImGui::SameLine();
     if (ImGui::Button("STEP")) {
-        // Action to take when the button is clicked
         run = 1;
         play_pause = 0; 
     }
@@ -205,7 +201,7 @@ void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_r
             ImGui::TableSetupColumn("Data");
             ImGui::TableHeadersRow();
 
-            for (int row = 0; row < 6; row++) { 
+            for (int row = 0; row <= 4; row++) { 
                 ImGui::TableNextRow();
                 switch (row) {
                 case 0:
@@ -230,28 +226,9 @@ void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_r
                     break;
                 case 3:
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("ALU CONTROL");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%d", 45);
-                    break;
-
-                case 4:
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("ALU IN A");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%d", 45);
-                    break;
-                case 5:
-                    ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("ALU IN B");
-                    ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%d", 45);
-                    break;
-                case 6:
-                    ImGui::TableSetColumnIndex(0);
                     ImGui::Text("ALU OUT");
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%d", 45);
+                    ImGui::Text("%d", alu_out);
                     break;
                 default:
                     break;
@@ -268,7 +245,4 @@ void show_cpu_window(uint16_t pc, uint16_t prev_pc, uint16_t a_reg, uint16_t d_r
 /*
 TODO:
 * switch format between signed decimal(detect two's complement), binary, hex values in ROM and rom table
-* Increase Display size
-* Add cpu stepping, pause, play, reset. if CPU "step" button pressed run "tick_clock()"
-* update current instruction rom color
 */ 

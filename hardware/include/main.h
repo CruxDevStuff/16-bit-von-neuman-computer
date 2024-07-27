@@ -53,6 +53,7 @@ unsigned char* rgb_data = new unsigned char[SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 GLuint texture_id;
 
 bool run = 0;
+bool reset_computer = 1;
 uint16_t prev_pc; 
 
 struct PixelIndex {

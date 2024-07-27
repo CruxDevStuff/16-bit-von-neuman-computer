@@ -153,7 +153,7 @@ module computer(
 
     CPU cpu( 
         .clk(clk),
-        .reset(1),
+        .reset(reset),
         .instruction(rom_out),
         .mem_in(mem_out),
         .cpu_write(load),

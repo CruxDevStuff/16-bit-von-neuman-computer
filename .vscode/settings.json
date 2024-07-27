@@ -66,7 +66,12 @@
         "compare": "cpp",
         "concepts": "cpp",
         "algorithm": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "stack": "cpp",
+        "numeric": "cpp"
     },
     "cSpell.words": [
         "noob"
