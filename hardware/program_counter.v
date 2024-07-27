@@ -12,10 +12,10 @@ module PC (
     always @(posedge clk) begin
         if (!reset_n) begin
             pc_value <= {15{1'b0}}; 
-        end else if (inc) begin
-            pc_value <= pc_value + 1; 
         end else if(load) begin
             pc_value <= data_in; 
+        end else if (inc) begin
+            pc_value <= pc_value + 1; 
         end
     end
     assign pc_out = pc_value; 

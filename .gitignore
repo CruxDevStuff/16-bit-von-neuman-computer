@@ -8,3 +8,8 @@ shell
 obj_dir
 .vscode/settings.json
 hardware/imgui.ini
+hardware/.ram_dump.txt.swp
+hardware/computer_waveform.vcd
+hardware/data_memory_waveform.vcd
+hardware/ram_dump.txt
+hardware/data_memory_waveform.vcd

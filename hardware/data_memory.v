@@ -8,16 +8,17 @@ module DataMemory(
     input [15:0] kb_in
     ); 
 
-    reg [15:0] memory [24575:0]; 
+    reg [15:0] memory [24576:0]; 
 
     // set screen memory to initialise a half white and half black screen patern
     initial begin
-        for (integer i=16383 ; i < 20479; i++) begin
-            memory[i] = 65535;
-        end
-    //    for (integer i=16383 ; i < 24575; i++) begin
-    //         memory[i] = 65535;
-    //    end
+        // for (integer i=16384 ; i <= 20479; i++) begin
+        //     memory[i] = 65535;
+        // end
+        // for (integer i=16384 ; i < 24576; i++) begin
+        //         // memory[i] = 65535;
+        //         memory[i] = 16'b0011001100110011;
+        // end
     //    memory[16383] = 16'b0101010101010101;
     end
 
@@ -29,9 +30,10 @@ module DataMemory(
 
     // update keyboard memory map. 
     always begin
-        memory[24575] = kb_in;
+        memory[24576] = kb_in;
     end
 
     assign d_out = memory[adr]; 
-    assign screen_out = memory[24574:16383];
+    assign screen_out = memory[24575:16384];
 endmodule
+

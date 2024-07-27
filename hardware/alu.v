@@ -6,7 +6,7 @@ module ALU (input wire signed[15:0] x, y, output reg signed[15:0] result, input 
     wire [15:0] adder_out; 
     wire [15:0] and_out; 
 
-    always @(x or y) begin
+    always @(x or y or zx or nx or zy or ny or f or no) begin
         if (zx) begin
             x_in = {16{1'b0}}; 
         end else begin
@@ -34,7 +34,7 @@ module ALU (input wire signed[15:0] x, y, output reg signed[15:0] result, input 
     FULLADDER_16 adder16(tx, ty, adder_carry, adder_out); 
     AND_16 and16(tx, ty, and_out); 
 
-    always @(adder_out or and_out) begin 
+    always @(adder_out or and_out or zx or nx or zy or ny or f or no or x or y) begin 
 
         if (f) begin
             result = adder_out; 

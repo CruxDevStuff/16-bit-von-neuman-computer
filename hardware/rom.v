@@ -7,7 +7,8 @@ module ROM(
 
     reg [15:0] memory [32767:0]; 
 
-    parameter memory_file = "add.hack";
+    // parameter memory_file = "add.hack";
+    parameter memory_file = "draw.hack";
     
     initial begin
         $readmemb(memory_file, memory);
@@ -20,5 +21,5 @@ module ROM(
     //         $display("INS: %d: %b", i, memory[i]);
     //     end
     // end
-
+    assign d_out = memory[adr_in];
 endmodule
