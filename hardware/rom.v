@@ -7,9 +7,9 @@ module ROM(
 
     reg [15:0] memory [32767:0]; 
 
-    // parameter memory_file = "rect.hack";
-    parameter memory_file = "add.hack";
-    // parameter memory_file = "sub.hack";
+    parameter memory_file = "rect.hack"; // draws a rectangle of length RAM[0](set to 25 at the start of the program)
+    // parameter memory_file = "add.hack"; // add's two numbers
+    // parameter memory_file = "sub.hack"; // subtracts two numbers and stores it in two's complement form.
     
     initial begin
         $readmemb(memory_file, memory);
