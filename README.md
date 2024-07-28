@@ -19,7 +19,7 @@ Tested on Mac, should work without problems on Linux
 git clone --recursive https://github.com/CruxDevStuff/16-bit-von-neuman-computer.git
 
 # switch folder
-cd hardware
+cd 16-bit-von-neuman-computer/hardware
 
 # build
 make all
